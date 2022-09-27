@@ -19,7 +19,7 @@
 # backend together with tritonserver, start from here
 # -------------------------------------------------- #
 
-ARG TRITON_VERSION=22.01
+ARG TRITON_VERSION=22.03
 ARG BASE_IMAGE=nvcr.io/nvidia/tritonserver:${TRITON_VERSION}-py3
 FROM ${BASE_IMAGE} as server-builder
 
@@ -85,7 +85,12 @@ RUN   dpkg -i cuda-keyring_1.0-1_all.deb
 # Install pytorch
 RUN pip3 install torch==1.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html  && \
     pip3 install --extra-index-url https://pypi.ngc.nvidia.com regex fire ipywidgets tritonclient[all]
-
+   
+RUN pip3 install \
+    jupyterhub \
+    notebook \
+    jupyterlab
+    
 # for debug
 RUN apt-get update -q && \
     apt-get install -y --no-install-recommends openssh-server zsh tmux mosh locales-all clangd sudo cmake xz-utils zstd libz-dev git-lfs&& \
@@ -99,4 +104,3 @@ RUN mkdir /var/run/sshd -p
 RUN ln -sf /usr/bin/python3.8 /usr/bin/python
 
 ADD . /workspace/fastertransformer_backend
-
